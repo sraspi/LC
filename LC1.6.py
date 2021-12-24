@@ -49,7 +49,7 @@ K2 = True
 timestr = time.strftime("%Y%m%d_%H%M%S")
 Dateiname = "/home/pi/LC/logfile.txt"
 Startzeit = time.time() #Versuchsstartzeit
-header = ('\n' + "LC1.4.py started at: " + timestr + '\n' + "Zeit ,"  + "                t[h] , " +  "                                 CPU_temp, " + '\n')
+header = ('\n' + "LC1.6.py started at: " + timestr + '\n' + "Zeit ,"  + "                t[h] , " +  "                                 CPU_temp, " + '\n')
 data = open(Dateiname, "a")
 data.write(str(header))
 data.close()
@@ -87,9 +87,9 @@ try:
         fobj_out = open(Dateiname,"a" )
         fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(A0_mi) +  ' , ' + str(A1_mi) + " , " + str(A2_mi) + ' , ' + str(A3_mi) + ' , ' + str(cput) + '\n' )
         fobj_out.close()
-        time.sleep(1)
-     
-        if delta > 15/60 and K2:
+        time.sleep(5)
+        
+        if delta > 15/60 and K2:  # nach 15 Minuten shutdown, aber T1 loest nach 45 Minuten reboot aus
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
             time.sleep(0.1)
@@ -102,7 +102,11 @@ try:
             time.sleep(0.1)                     
             GPIO.output(27, GPIO.LOW)           # K1_OFF_init
             K2 = False
-            subrocess.call("/home/pi/LC/shutdown.sh")
+            fobj_out = open(Dateiname,"a" )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-----shutdown erfolgt nun, reboot nach 45 Minuten!---" + '\n' )
+            fobj_out.close()
+
+            subprocess.call("/home/pi/LC/shutdown.sh")
             print("\nBye")
  
         else:
