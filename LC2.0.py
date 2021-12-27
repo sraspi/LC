@@ -2,7 +2,10 @@ import sys
 from gpiozero import CPUTemperature
 import RPi.GPIO as GPIO
 import time
+import datetime
 import subprocess
+import os
+import shutil
 
 # Import the ADS1115 module.
 # Create an ADS1115 ADC (16-bit) instance.
@@ -43,17 +46,29 @@ A1_mi = 0
 A2_mi = 0
 A3_mi = 0
 
-K2 = True
+NAS = True
+mov = True
+
+
+        
 
            
 timestr = time.strftime("%Y%m%d_%H%M%S")
 Dateiname = "/home/pi/LC/logfile.txt"
 Startzeit = time.time() #Versuchsstartzeit
-header = ('\n' + "LC1.7.py started at: " + timestr + '\n' + "Zeit ,"  + "                t[h] , " +  "                                 CPU_temp, " + '\n')
+th = datetime.datetime.now()
+t1 = th.hour
+header = ('\n' + "LC1.9.py started at: " + timestr + '\n' + "Zeit ,"  + "                t[h] , " +  "                                 CPU_temp, " + '\n')
 data = open(Dateiname, "a")
 data.write(str(header))
 data.close()
-  
+ 
+if NAS:
+   f = open("/home/pi/NAS/LC.log", "a")
+   f.write( '\n' + "LC2.0.py started at: " + timestr)
+   f.close()
+   NAS = False
+   
 def ads(): # Read all the ADC channel values in a list.
     global A0_mi
     global A1_mi
@@ -83,13 +98,21 @@ try:
         cpu = CPUTemperature()
         cput = float(cpu.temperature)
         Datum=time.strftime("%Y-%m-%d %H:%M:%S")
-        print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             A0: "  + str(A0_mi) + "        A1: " + str(A1_mi) + "             A2 "  + str(A2_mi)   +  "             A3 "  + str(A3_mi))
+        #print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             A0: "  + str(A0_mi) + "        A1: " + str(A1_mi) + "             A2 "  + str(A2_mi)   +  "             A3 "  + str(A3_mi))
         fobj_out = open(Dateiname,"a" )
         fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(A0_mi) +  ' , ' + str(A1_mi) + " , " + str(A2_mi) + ' , ' + str(A3_mi) + ' , ' + str(cput) + '\n' )
         fobj_out.close()
-        time.sleep(5)
+        time.sleep(60)
+        th = datetime.datetime.now()
+        t2 = th.hour
         
-        if delta > 5 and K2:  # nach 5h shutdown, aber T1 loest nach 45 Minuten reboot aus
+       
+        
+        if t2-t1 == 0:
+            th = datetime.datetime.now()
+            t2 = th.hour
+            print("nothing to do")
+        else:
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
             time.sleep(0.1)
@@ -101,16 +124,18 @@ try:
             GPIO.output(27, GPIO.HIGH)          # K1_OFF
             time.sleep(0.1)                     
             GPIO.output(27, GPIO.LOW)           # K1_OFF_init
-            K2 = False
-            fobj_out = open(Dateiname,"a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-----shutdown erfolgt nun, reboot nach 45 Minuten!---" + '\n' )
+            
+            fobj_out = open("/home/pi/NAS/LC.log", "a" )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---shutdown---" + '\n' )
             fobj_out.close()
+            
+            if t2 == 0 and mov:
+                Datum = time.strftime("%Y_%m_%d")
+                shutil.move("/home/pi/LC/logfile.txt", "/home/pi/NAS/LC/" + Datum + ".txt")
+                mov = False
 
             subprocess.call("/home/pi/LC/shutdown.sh")
             print("\nBye")
- 
-        else:
-            print("----------------still alive, delta: ", round(delta*60,1), "Min---------------")
 
     
     print("\nBye")
