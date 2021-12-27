@@ -58,7 +58,7 @@ Dateiname = "/home/pi/LC/logfile.txt"
 Startzeit = time.time() #Versuchsstartzeit
 th = datetime.datetime.now()
 t1 = th.hour
-header = ('\n' + "LC1.9.py started at: " + timestr + '\n' + "Zeit ,"  + "                t[h] , " +  "                                 CPU_temp, " + '\n')
+header = ('\n' + "LC2.0.py started at: " + timestr + '\n' + "Zeit ,"  + "                t[h] , " +  "                                 CPU_temp, " + '\n')
 data = open(Dateiname, "a")
 data.write(str(header))
 data.close()
