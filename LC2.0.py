@@ -59,9 +59,9 @@ Startzeit = time.time() #Versuchsstartzeit
 th = datetime.datetime.now()
 t1 = th.hour
 header = ('\n' + "LC2.0.py started at: " + timestr + '\n' + "Zeit ,"  + "                t[h] , " +  "                                 CPU_temp, " + '\n')
-data = open(Dateiname, "a")
-data.write(str(header))
-data.close()
+#data = open(Dateiname, "a")
+#	data.write(str(header))
+#data.close()
  
 if NAS:
    f = open("/home/pi/NAS/LC.log", "a")
