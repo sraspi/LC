@@ -80,27 +80,18 @@ def ads(): # Read all the ADC channel values in a list.
 try:
     
     while True:
-        if NAS:
-            f = open("/home/pi/NAS/LC.log", "a")
-            f.write( '\n' + "LC2.0.py started at: " + timestr)
-            f.close()
-            NAS = False
-
-        #ADS-Werte abfragen:
-        ads()                                # ADS-Sensorwerte abfragen
-
         #Bildschirmnausgabe und Datei schreiben:
         Endzeit = time.time()
         delta = (Endzeit - Startzeit)/60/60  # Zeit in Stunden seit Versuchsstart
         cpu = CPUTemperature()
         cput = float(cpu.temperature)
         Datum=time.strftime("%Y-%m-%d %H:%M:%S")
-        #print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             A0: "  + str(A0_mi) + "        A1: " + str(A1_mi) + "             A2 "  + str(A2_mi)   +  "             A3 "  + str(A3_mi))
+        print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             A0: "  + str(A0_mi) + "        A1: " + str(A1_mi) + "             A2 "  + str(A2_mi)   +  "             A3 "  + str(A3_mi))
         
         fobj_out = open(Dateiname,"a" )
         fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(A0_mi) +  ' , ' + str(A1_mi) + " , " + str(A2_mi) + ' , ' + str(A3_mi) + ' , ' + str(cput) + '\n' )
         fobj_out.close()
-        time.sleep(1)
+        time.sleep(10)
         th = datetime.datetime.now()
         t2 = th.hour
         
@@ -109,22 +100,6 @@ try:
             t2 = th.hour
             
         else:
-            print("T1, T2 init, K1_OFF, K1 init")
-            GPIO.output(20, GPIO.HIGH)          # T1_init
-            GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
-            time.sleep(0.1)
-            GPIO.output(16, GPIO.HIGH)          # T2_init
-            print("T2_start & K2_ON & T2_init")
-            GPIO.output(20, GPIO.LOW)           # T1_start
-            time.sleep(0.2)
-            GPIO.output(20, GPIO.HIGH)          # T1_init
-            GPIO.output(27, GPIO.HIGH)          # K1_OFF
-            time.sleep(0.1)                     
-            GPIO.output(27, GPIO.LOW)           # K1_OFF_init
-            print("write shutdown to NAS")
-            fobj_out = open("/home/pi/NAS/LC.log", "a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---shutdown at xx:01" + '\n' )
-            fobj_out.close()
            
             
             if t2 == 0 and mov:
@@ -133,11 +108,8 @@ try:
                 shutil.move("/home/pi/LC/logfile.txt", "/home/pi/NAS/LC/" + Datum + ".txt")
                 mov = False
 
-            subprocess.call("/home/pi/LC/shutdown.sh")
-            print("\nBye")
           
-            GPIO.cleanup()
-            sys.exit()
+            
 
 except KeyboardInterrupt:
     print("keyboardInterrupt")
@@ -147,14 +119,18 @@ except KeyboardInterrupt:
     d.close()
     GPIO.cleanup()
     print("\nBye")
+   
     sys.exit()
 
 except:
     e = sys.exc_info()[1]
-    print("Error: ", e)
+    print(e)
     fobj_out = open("/home/pi/NAS/LC.log", "a" )
-    fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + " Error: " + str(e) + '\n' )
+    fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + str(e) + '\n' )
     fobj_out.close()
+    print("ERROR")
+    e = sys.exc_info()[1]
+    print(e)
     GPIO.cleanup()
     sys.exit()
 
