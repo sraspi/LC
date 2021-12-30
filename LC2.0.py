@@ -12,8 +12,7 @@ import shutil
 from ADS1x15 import ADS1115
 adc = ADS1115()
 
-
-#GPIO_setup:
+#GPIO_setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(9, GPIO.OUT)        #V1_on
 GPIO.setup(10, GPIO.OUT)       #V2_on
@@ -30,7 +29,7 @@ GPIO.output(27, GPIO.LOW)      # K1_OFF ueber Transistor
 GPIO.output(20, GPIO.HIGH)     # T1_init
 GPIO.output(16, GPIO.HIGH)     # T2_init
 
-#ADS settings:
+#ADS settings
 values = [0]*4
 channel = 0
 GAIN = 1
@@ -50,14 +49,32 @@ A3_mi = 0
 NAS = True
 mov = True
 
-          
+
+        
+
+           
 timestr = time.strftime("%Y%m%d_%H%M%S")
 Dateiname = "/home/pi/LC/logfile.txt"
 Startzeit = time.time() #Versuchsstartzeit
 th = datetime.datetime.now()
 t1 = th.hour
-#header = ('\n' + "LC2.0.py started at: " + timestr + '\n' + "Zeit ,"  + "                t[h] , " +  "                                 CPU_temp, " + '\n')
+header = ('\n' + "LC2.0.py started at: " + timestr + '\n' + "Zeit ,"  + "                t[h] , " +  "                                 CPU_temp, " + '\n')
+#data = open(Dateiname, "a")
+#	data.write(str(header))
+#data.close()
 
+try:
+    subprocess.call("/home/pi/LC/mount.sh")
+    print("NAS mounted")
+except:
+    e = sys.exc_info()[1]
+    print("NAS not mounted", e)
+ 
+if NAS:
+   f = open("/home/pi/NAS/LC.log", "a")
+   f.write( '\n' + "LC2.0.py started at: " + timestr)
+   f.close()
+   NAS = False
    
 def ads(): # Read all the ADC channel values in a list.
     global A0_mi
@@ -78,38 +95,31 @@ def ads(): # Read all the ADC channel values in a list.
 
 
 try:
-    
-    while True:
-        if NAS:
-            f = open("/home/pi/NAS/LC.log", "a")
-            f.write( '\n' + "LC2.0.py started at: " + timestr)
-            f.close()
-            NAS = False
 
-        #ADS-Werte abfragen:
+    while True:
         ads()                                # ADS-Sensorwerte abfragen
 
-        #Bildschirmnausgabe und Datei schreiben:
+        # Bildschirmnausgabe und Datei schreiben:
         Endzeit = time.time()
         delta = (Endzeit - Startzeit)/60/60  # Zeit in Stunden seit Versuchsstart
         cpu = CPUTemperature()
         cput = float(cpu.temperature)
         Datum=time.strftime("%Y-%m-%d %H:%M:%S")
         #print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             A0: "  + str(A0_mi) + "        A1: " + str(A1_mi) + "             A2 "  + str(A2_mi)   +  "             A3 "  + str(A3_mi))
-        
         fobj_out = open(Dateiname,"a" )
         fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(A0_mi) +  ' , ' + str(A1_mi) + " , " + str(A2_mi) + ' , ' + str(A3_mi) + ' , ' + str(cput) + '\n' )
         fobj_out.close()
-        time.sleep(1)
+        time.sleep(10)
         th = datetime.datetime.now()
         t2 = th.hour
+        
+       
         
         if t2-t1 == 0:
             th = datetime.datetime.now()
             t2 = th.hour
-            
+            print("nothing to do")
         else:
-            print("T1, T2 init, K1_OFF, K1 init")
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
             time.sleep(0.1)
@@ -121,23 +131,24 @@ try:
             GPIO.output(27, GPIO.HIGH)          # K1_OFF
             time.sleep(0.1)                     
             GPIO.output(27, GPIO.LOW)           # K1_OFF_init
-            print("write shutdown to NAS")
+            
             fobj_out = open("/home/pi/NAS/LC.log", "a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---shutdown at xx:01" + '\n' )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---shutdown---" + '\n' )
             fobj_out.close()
-           
             
             if t2 == 0 and mov:
                 Datum = time.strftime("%Y_%m_%d")
-                print("new day: move logfile.txt to NAC/LC")
                 shutil.move("/home/pi/LC/logfile.txt", "/home/pi/NAS/LC/" + Datum + ".txt")
                 mov = False
 
             subprocess.call("/home/pi/LC/shutdown.sh")
             print("\nBye")
-          
-            GPIO.cleanup()
-            sys.exit()
+
+    
+    print("\nBye")
+    time.sleep(0.1)
+    GPIO.cleanup()
+               
 
 except KeyboardInterrupt:
     print("keyboardInterrupt")
@@ -148,17 +159,3 @@ except KeyboardInterrupt:
     GPIO.cleanup()
     print("\nBye")
     sys.exit()
-
-except:
-    e = sys.exc_info()[1]
-    print("Error: ", e)
-    fobj_out = open("/home/pi/NAS/LC.log", "a" )
-    fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + " Error: " + str(e) + '\n' )
-    fobj_out.close()
-    GPIO.cleanup()
-    sys.exit()
-
-
-
-    
-
