@@ -1,3 +1,4 @@
+USS:
 2021_12_13: 4GB-SD-Karte defekt, wiederholte Ausfälle des Pi wegen Schreib/Lesefehlern.
 - 32GB-Karte mit rpi-imager erstellt(inkl ssh und WLAN Fritzbox Keller)
 - git installiert, ssh installiert und über git clone.... alles von USS aus github geclont
@@ -18,4 +19,5 @@
 - crontab erg�nzen:
 - @reboot sleep 120 && mount -a
 
-- läuft ab 13.12.2021
+- USS läuft ab 13.12.2021
+LS-Problem NAS-mount wenn Fritzbox aus-boot-Vorgang bleibt bei NAS-mount stehen, LC-launcher wird nicht ausgef�hrt
