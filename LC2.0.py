@@ -63,17 +63,12 @@ header = ('\n' + "LC2.0.py started at: " + timestr + '\n' + "Zeit ,"  + "       
 #	data.write(str(header))
 #data.close()
 
-try:
-    subprocess.call("/home/pi/LC/mount.sh")
-    print("NAS mounted")
-except:
-    e = sys.exc_info()[1]
-    print("NAS not mounted", e)
  
 if NAS:
-   f = open("/home/pi/NAS/LC.log", "a")
+   f = open("/home/pi/LC/LC.log", "a")
    f.write( '\n' + "LC2.0.py started at: " + timestr)
    f.close()
+   print("NAS")
    NAS = False
    
 def ads(): # Read all the ADC channel values in a list.
@@ -99,7 +94,7 @@ try:
     while True:
         ads()                                # ADS-Sensorwerte abfragen
 
-        # Bildschirmnausgabe und Datei schreiben:
+        print("Bildschirmnausgabe und Datei schreiben:")
         Endzeit = time.time()
         delta = (Endzeit - Startzeit)/60/60  # Zeit in Stunden seit Versuchsstart
         cpu = CPUTemperature()
@@ -132,13 +127,13 @@ try:
             time.sleep(0.1)                     
             GPIO.output(27, GPIO.LOW)           # K1_OFF_init
             
-            fobj_out = open("/home/pi/NAS/LC.log", "a" )
+            fobj_out = open("/home/pi/LC/LC.log", "a" )
             fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---shutdown---" + '\n' )
             fobj_out.close()
             
             if t2 == 0 and mov:
                 Datum = time.strftime("%Y_%m_%d")
-                shutil.move("/home/pi/LC/logfile.txt", "/home/pi/NAS/LC/" + Datum + ".txt")
+                shutil.move("/home/pi/LC/logfile.txt", "/home/pi/LC/" + Datum + ".txt")
                 mov = False
 
             subprocess.call("/home/pi/LC/shutdown.sh")
