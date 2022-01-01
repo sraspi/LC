@@ -20,4 +20,8 @@ USS:
 - @reboot sleep 120 && mount -a
 
 - USS lÃ¤uft ab 13.12.2021
-LS-Problem NAS-mount wenn Fritzbox aus-boot-Vorgang bleibt bei NAS-mount stehen, LC-launcher wird nicht ausgeführt
+31.12.2021:
+LS-Problem NAS-mount wenn Fritzbox aus-boot-Vorgang bleibt bei NAS-mount stehen, LC-launcher wird nicht ausgeführt, 2.1 jetzt local: Startzeit dennoch falsch>
+beim booten 10 Sekunden Pause (über bootjobs.sh sleep 10)
+
+01.01.2022 LC2.1.py verified
