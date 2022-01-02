@@ -46,33 +46,11 @@ A1_mi = 0
 A2_mi = 0
 A3_mi = 0
 
-NAS = True
+Start= True
 mov = True
 
-
-        
-try:
-           
-    timestr = time.strftime("%Y%m%d_%H%M%S")
-    Dateiname = "/home/pi/LC/logfile.txt"
-    Startzeit = time.time() #Versuchsstartzeit
-    th = datetime.datetime.now()
-    t1 = th.hour
-    f = open("/home/pi/LC/LC.log", "a")
-    f.write( '\n' + "2.2 exception test at: " + timestr)
-    f.close()
-
-except:
-    f = open("/home/pi/LC/LC.log", "a")
-    f.write( '\n' + "exception!" + timestr)
-    f.close()
-    
+time.sleep(1)
  
-if NAS:
-   f = open("/home/pi/LC/LC.log", "a")
-   f.write( '\n' + "LC2.2.py started at: " + timestr)
-   f.close()
-   NAS = False
    
 def ads(): # Read all the ADC channel values in a list.
     global A0_mi
@@ -93,8 +71,30 @@ def ads(): # Read all the ADC channel values in a list.
 
 
 try:
+    try:
+        subprocess.call("/home/pi/LC/mount.sh")
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        f = open("/home/pi/NAS/LC1.log", "a")
+        f.write( '\n' + "mounted at: " + timestr)
+        f.close()
+    except:
+        e = sys.exc_info()[1]
+        print("Error: ", e)
+        fobj_out = open("/home/pi/LC/LC1.log", "a" )
+        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + " Error: " + str(e) + '\n' )
+        fobj_out.close()
 
     while True:
+        if Start:
+            Dateiname = "/home/pi/LC/logfile.txt"
+            Startzeit = time.time() #Versuchsstartzeit
+            th = datetime.datetime.now()
+            t1 = th.hour
+            timestr = time.strftime("%Y%m%d_%H%M%S")
+            f = open("/home/pi/LC/LC.log", "a")
+            f.write( '\n' + "LC2.1.py started at: " + timestr)
+            f.close()
+            Start = False
         ads()                                # ADS-Sensorwerte abfragen
 
         #Bildschirmnausgabe und Datei schreiben:
@@ -116,7 +116,7 @@ try:
         if t2-t1 == 0:
             th = datetime.datetime.now()
             t2 = th.hour
-            
+            print("nothing to do")
         else:
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
@@ -131,7 +131,7 @@ try:
             GPIO.output(27, GPIO.LOW)           # K1_OFF_init
             
             fobj_out = open("/home/pi/LC/LC.log", "a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---2.2 shutdown---" + '\n' )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---2.1 shutdown---" + '\n' )
             fobj_out.close()
             
             if t2 == 0 and mov:
