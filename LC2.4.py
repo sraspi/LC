@@ -72,27 +72,29 @@ def ads(): # Read all the ADC channel values in a list.
 
 try:
     try:
+        name_log = "/home/pi/NAS/LC.log"
         subprocess.call("/home/pi/LC/mount.sh")
         timestr = time.strftime("%Y%m%d_%H%M%S")
-        f = open("/home/pi/NAS/LC1.log", "a")
+        f = open(name_log, "a")
         f.write( '\n' + "mounted at: " + timestr)
         f.close()
     except:
         e = sys.exc_info()[1]
         print("Error: ", e)
-        fobj_out = open("/home/pi/LC/LC1.log", "a" )
+        name_log = "/home/pi/data/LC.log"
+        fobj_out = open(name_log, "a" )
         fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + " Error: " + str(e) + '\n' )
         fobj_out.close()
 
     while True:
         if Start:
-            Dateiname = "/home/pi/LC/logfile.txt"
+            Dateiname = "/home/pi/data/logfile.txt"
             Startzeit = time.time() #Versuchsstartzeit
             th = datetime.datetime.now()
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
-            f = open("/home/pi/LC/LC.log", "a")
-            f.write( '\n' + "LC2.1.py started at: " + timestr)
+            f = open(name_log, "a")
+            f.write( '\n' + "LC2.3.py started at: " + timestr)
             f.close()
             Start = False
         ads()                                # ADS-Sensorwerte abfragen
@@ -130,13 +132,19 @@ try:
             time.sleep(0.1)                     
             GPIO.output(27, GPIO.LOW)           # K1_OFF_init
             
-            fobj_out = open("/home/pi/LC/LC.log", "a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---2.1 shutdown---" + '\n' )
-            fobj_out.close()
+            try:
+                fobj_out = open(name_log,  "a" )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---2.3 shutdown---" + '\n' )
+                fobj_out.close()
+            except:
+                fobj_out = open("/home/pi/data/LC.log",  "a" )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!---2.3 shutdown---" + '\n' )
+                fobj_out.close()
+
             
             if t2 == 0 and mov:
                 Datum = time.strftime("%Y_%m_%d")
-                shutil.move("/home/pi/LC/logfile.txt", "/home/pi/LC/" + Datum + ".txt")
+                shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                 mov = False
 
             subprocess.call("/home/pi/LC/shutdown.sh")
