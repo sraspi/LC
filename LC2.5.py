@@ -1,3 +1,11 @@
+from __future__ import unicode_literals
+import urllib
+import smtplib, ssl
+import email
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import sys
 from gpiozero import CPUTemperature
 import RPi.GPIO as GPIO
@@ -6,6 +14,8 @@ import datetime
 import subprocess
 import os
 import shutil
+
+import mail_lc_status
 
 # Import the ADS1115 module.
 # Create an ADS1115 ADC (16-bit) instance.
@@ -88,14 +98,16 @@ try:
 
     while True:
         if Start:
+            
             Dateiname = "/home/pi/data/logfile.txt"
             Startzeit = time.time() #Versuchsstartzeit
             th = datetime.datetime.now()
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             f = open(name_log, "a")
-            f.write( '\n' + "LC2.3.py started at: " + timestr)
+            f.write( '\n' + "LC2.5.py started at: " + timestr)
             f.close()
+            mail_lc_status.lc_mail()
             Start = False
         ads()                                # ADS-Sensorwerte abfragen
 
@@ -132,15 +144,22 @@ try:
             time.sleep(0.1)                     
             GPIO.output(27, GPIO.LOW)           # K1_OFF_init
             
-            fobj_out = open(name_log,  "a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "---2.3 shutdown---" + '\n' )
-            fobj_out.close()
+            try:
+                fobj_out = open(name_log,  "a" )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-2.5 shutdown-" + '\n' )
+                fobj_out.close()
+            except:
+                fobj_out = open("/home/pi/data/LC.log",  "a" )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!---2.5 shutdown---" + '\n' )
+                fobj_out.close()
+
             
             if t2 == 0 and mov:
                 Datum = time.strftime("%Y_%m_%d")
                 shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                 mov = False
-
+            mail_lc_status.lc_mail()
+            time.sleep(10)
             subprocess.call("/home/pi/LC/shutdown.sh")
             print("\nBye")
 
