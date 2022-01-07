@@ -105,7 +105,7 @@ try:
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             f = open(name_log, "a")
-            f.write( '\n' + "LC2.5.py started at: " + timestr)
+            f.write( '\n' + "LC2.5.py (T1=23h) at: " + timestr)
             f.close()
             mail_lc_status.lc_mail()
             Start = False
