@@ -153,7 +153,7 @@ try:
                 fobj_out.close()
 
             
-            if t2 == 18 and mov:
+            if t2 == 14 and mov:
                 Datum = time.strftime("%Y_%m_%d")
                 shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                 mov = False
