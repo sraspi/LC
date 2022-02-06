@@ -16,6 +16,7 @@ import os
 import shutil
 
 import mail_lc_status
+import mail_14
 
 # Import the ADS1115 module.
 # Create an ADS1115 ADC (16-bit) instance.
@@ -46,12 +47,25 @@ GPIO.setup(23, GPIO.IN, GPIO.PUD_DOWN)        #K2_status_16_gn
 GPIO.output(15, GPIO.LOW)                     #K2_init_LOW
 GPIO.output(18, GPIO.HIGH)                    #K2_OUT_init
 
+mail_14.mail14()
+
+
 #Check if U_bat > 14V:
 if GPIO.input(23) == GPIO.LOW:
     print("LOW")
 if GPIO.input(23) == GPIO.HIGH:
     print("------------------U_bat> 14V !!!!------------------")
-    
+
+    #Zustand K2 in LC.log schreiben
+    try:
+        fobj_out = open(name_log,  "a" )
+        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--------U_>14,8V-----" + '\n' )
+        fobj_out.close()
+    except:
+        fobj_out = open("/home/pi/data/LC.log",  "a" )
+        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!! --------U_>14,8V-----" + '\n' )
+        fobj_out.close()
+
     
 #K2 wieder auf HIGH setzen:
 GPIO.output(15, GPIO.HIGH)
@@ -75,7 +89,7 @@ I_ges = 0
 I_pi = 0
 I_bat = 0
 A2_mi = 0
-Diff = 0
+U_bat = 0
 
 Start= True
 mov = True
@@ -95,21 +109,22 @@ def ads(): # Read all the ADC channel values in a list.
     global I_ges
     global I_pi
     global A2_mi
-    global Diff
+    global U_bat
     
     for n in range(5):   #  Mittelwerte aus n Werten
         # Read the specified ADC channel using the previously set gain value.
         A0[n] = (adc.read_adc_difference(0, 1, 8))*0.000125*100/18*1000*1.03 # 0: Channel 0_ge minus channel 1_gn (I_bat)
-        A1[n] = -(adc.read_adc_difference(1, 1, 8)-7)*0.000125*100/18*1000*1.02 #1: Channel 0_ge minus channel 3_rt (I_ges)
-        A2[n] = -(adc.read_adc_difference(2, 1, 8)-7)*0.000125*100/18*1000*1.02 #2: Channel 1_gn minus channel 3_rt (I_ges+I_bat)
-        A3[n] = A0[n] + A1[n] -A2[n]
+        A1[n] = -(adc.read_adc_difference(1, 1, 8)-6)*0.000125*100/18*1000*1.02 #1: Channel 0_ge minus channel 3_rt (I_ges)
+        A2[n] = -(adc.read_adc_difference(2, 1, 8)-6)*0.000125*100/18*1000*1.02 #2: Channel 1_gn minus channel 3_rt (I_ges+I_bat)
+        A3[n] = adc.read_adc(1, 1, )*0.000125*100/18
+      
 
         
     I_bat = round(sum(A0)/5,1) #I_bat
     I_ges = round(sum(A1)/5,1) #I_ges
     I_pi = round((I_ges - I_bat),1)
     A2_mi = round(sum(A2)/5,1) # I_ges+I_bat
-    Diff = round(sum(A3)/5,1)
+    U_bat = round(sum(A3)/5,2)
     
 
 
@@ -139,7 +154,7 @@ try:
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             f = open(name_log, "a")
-            f.write( '\n' + "LC2.9.py started at: " + timestr)
+            f.write( '\n' + "LC3.0.py started at: " + timestr)
             f.close()
             Start = False
         ads()                                # ADS-Sensorwerte abfragen
@@ -150,9 +165,9 @@ try:
         cpu = CPUTemperature()
         cput = float(cpu.temperature)
         Datum=time.strftime("%Y-%m-%d %H:%M:%S")
-        print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             I_ges: "  + str(I_ges) + "        I_bat: " + str(I_bat) + "             I_pi "  + str(I_pi)   +  "             Diff: "  + str(Diff))
+        print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             I_ges: "  + str(I_ges) + "        I_bat: " + str(I_bat) + "             I_pi "  + str(I_pi)   +  "             U_bat: "  + str(U_bat))
         fobj_out = open(Dateiname,"a" )
-        fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(I_ges) +  ' , ' + str(I_bat) + " , " + str(I_pi) + ' , ' + str(Diff) + ' , ' + str(cput) + '\n' )
+        fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(I_ges) +  ' , ' + str(I_bat) + " , " + str(I_pi) + ' , ' + str(U_bat) + ' , ' + str(cput) + '\n' )
         fobj_out.close()
         time.sleep(10)
         th = datetime.datetime.now()
@@ -179,19 +194,20 @@ try:
             
             try:
                 fobj_out = open(name_log,  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-2.9 shutdown-" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-3.0 shutdown-" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!---2.9 shutdown---" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!---3.0 shutdown---" + '\n' )
                 fobj_out.close()
 
             
-            if t2 == 17 and mov:
+            if t2 == 18 and mov:
                 Datum = time.strftime("%Y_%m_%d")
                 shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                 mov = False
                 mail_lc_status.lc_mail()
+        
             
             time.sleep(10)
             subprocess.call("/home/pi/LC/shutdown.sh")
