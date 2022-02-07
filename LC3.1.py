@@ -52,17 +52,18 @@ GPIO.output(18, GPIO.HIGH)                    #K2_OUT_init
 if GPIO.input(23) == GPIO.LOW:
     print("LOW")
 if GPIO.input(23) == GPIO.HIGH:
+    timestr = time.strftime("%Y%m%d_%H%M%S")
     print("------------------U_bat> 14V !!!!------------------")
     mail_14.mail14()
 
     #Zustand K2 in LC.log schreiben
     try:
         fobj_out = open(name_log,  "a" )
-        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--------U_>14,8V-----" + '\n' )
+        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: "  + "--------U_bat>14V-----" + '\n' )
         fobj_out.close()
     except:
         fobj_out = open("/home/pi/data/LC.log",  "a" )
-        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!! --------U_>14,8V-----" + '\n' )
+        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "network ERROR!! --------U_bat>14V-----" + '\n' )
         fobj_out.close()
 
     
@@ -153,7 +154,7 @@ try:
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             f = open(name_log, "a")
-            f.write( '\n' + "LC3.0.py started at: " + timestr)
+            f.write( '\n' + "LC3.1.py started at: " + timestr)
             f.close()
             Start = False
         ads()                                # ADS-Sensorwerte abfragen
@@ -202,11 +203,11 @@ try:
             
             try:
                 fobj_out = open(name_log,  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-3.0 shutdown-" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-3.1 shutdown-" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!---3.0 shutdown---" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!---3.1 shutdown---" + '\n' )
                 fobj_out.close()
 
             
