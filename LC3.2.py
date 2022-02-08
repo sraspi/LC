@@ -48,29 +48,7 @@ GPIO.setup(23, GPIO.IN, GPIO.PUD_DOWN)        #K2_status_16_gn
 GPIO.output(15, GPIO.LOW)                     #K2_init_LOW
 GPIO.output(18, GPIO.HIGH)                    #K2_OUT_init
 
-#Check if U_bat > 14V:
-if GPIO.input(23) == GPIO.LOW:
-    print("LOW")
-if GPIO.input(23) == GPIO.HIGH:
-    timestr = time.strftime("%Y%m%d_%H%M%S")
-    print("------------------U_bat> 14V !!!!------------------")
-    mail_14.mail14()
 
-    #Zustand K2 in LC.log schreiben
-    try:
-        fobj_out = open(name_log,  "a" )
-        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: "  + "--------U_bat>14V-----" + '\n' )
-        fobj_out.close()
-    except:
-        fobj_out = open("/home/pi/data/LC.log",  "a" )
-        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "network ERROR!! --------U_bat>14V-----" + '\n' )
-        fobj_out.close()
-
-    
-#K2 wieder auf HIGH setzen:
-GPIO.output(15, GPIO.HIGH)
-time.sleep(0.5)
-GPIO.output(15, GPIO.LOW)
 
 
 #ADS settings
@@ -93,6 +71,59 @@ U_bat = 0
 
 Start= True
 mov = True
+
+Ub14 = True
+
+def check_U12():
+    if U_bat > 12:
+        print("U_bat>12V")
+    else:
+        print("U_bat<12V, no reboot, shutdown now")
+        mail_12.mail12()
+        subprocess.call("/home/pi/LC/shutdown.sh")
+        time.sleep(10)
+
+def check_U14():
+    global Ub14
+    if GPIO.input(23) == GPIO.LOW:
+        print("K2_LOW") 
+        #Zustand K2 in LC.log schreiben
+        try:
+            fobj_out = open(name_log,  "a" )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: "  + "K2_start == LOW" + '\n' )
+            fobj_out.close()
+        except:
+            fobj_out = open("/home/pi/data/LC.log",  "a" )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "network ERROR!! K2_start == LOW" + '\n' )
+            fobj_out.close()
+
+    if GPIO.input(23) == GPIO.HIGH:
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        print("------------------U_bat> 14V !!!!------------------")
+        print("K2_OFF(HIGH)")
+        Ub14 = False
+        mail_14.mail14()
+        
+        #Zustand K2 in LC.log schreiben
+        try:
+            fobj_out = open(name_log,  "a" )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: "  + "--------U_bat>14V-----" + '\n' )
+            fobj_out.close()
+        except:
+            fobj_out = open("/home/pi/data/LC.log",  "a" )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "network ERROR!! --------U_bat>14V-----" + '\n' )
+            fobj_out.close()
+        
+check_U14()
+time.sleep(1)
+   
+#K2 wieder auf HIGH setzen:
+print("K2 reset")
+GPIO.output(15, GPIO.HIGH)
+time.sleep(0.2)
+GPIO.output(15, GPIO.LOW)
+
+check_U14()
 
 time.sleep(1)
  
@@ -127,7 +158,7 @@ def ads(): # Read all the ADC channel values in a list.
     U_bat = round(sum(A3)/5,2)
     
 
-
+time.sleep(6)
 
 try:
     try:
@@ -154,7 +185,7 @@ try:
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             f = open(name_log, "a")
-            f.write( '\n' + "LC3.1.py started at: " + timestr)
+            f.write( '\n' + "LC3.2.py started at: " + timestr)
             f.close()
             Start = False
         ads()                                # ADS-Sensorwerte abfragen
@@ -173,13 +204,12 @@ try:
         th = datetime.datetime.now()
         t2 = th.hour
         
-        if U_bat > 12:
-            print("U_bat>12V")
-        else:
-            print("U_bat<12V, no reboot, shutdown now")
-            mail_12.mail12()
-            subprocess.call("/home/pi/LC/shutdown.sh")
-            time.sleep(10)
+        if Ub14 == 1:
+            check_U14()
+            print("U14 changed to ", str(Ub14))
+            
+            
+        check_U12()
 
             
             
@@ -203,11 +233,11 @@ try:
             
             try:
                 fobj_out = open(name_log,  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-3.1 shutdown-" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-3.2 shutdown-" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!---3.1 shutdown---" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!---3.2 shutdown---" + '\n' )
                 fobj_out.close()
 
             
