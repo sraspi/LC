@@ -88,15 +88,7 @@ def check_U14():
     if GPIO.input(23) == GPIO.LOW:
         print("K2_LOW") 
         #Zustand K2 in LC.log schreiben
-        try:
-            fobj_out = open(name_log,  "a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: "  + "K2_start == LOW" + '\n' )
-            fobj_out.close()
-        except:
-            fobj_out = open("/home/pi/data/LC.log",  "a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "network ERROR!! K2_start == LOW" + '\n' )
-            fobj_out.close()
-
+        
     if GPIO.input(23) == GPIO.HIGH:
         timestr = time.strftime("%Y%m%d_%H%M%S")
         print("------------------U_bat> 14V !!!!------------------")
@@ -158,7 +150,7 @@ def ads(): # Read all the ADC channel values in a list.
     U_bat = round(sum(A3)/5,2)
     
 
-time.sleep(6)
+time.sleep(10)
 
 try:
     try:
@@ -241,7 +233,7 @@ try:
                 fobj_out.close()
 
             
-            if t2 == 18 and mov:
+            if t2 == 9 and mov:
                 Datum = time.strftime("%Y_%m_%d")
                 shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                 mov = False
