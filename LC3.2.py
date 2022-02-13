@@ -259,4 +259,3 @@ except KeyboardInterrupt:
     GPIO.cleanup()
     print("\nBye")
     sys.exit()
-
