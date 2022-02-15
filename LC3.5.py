@@ -80,6 +80,7 @@ def check_U12():
     else:
         print("U_bat<12V, no reboot, shutdown now")
         mail_12.mail12()
+        time.sleep(120)
         subprocess.call("/home/pi/LC/shutdown.sh")
         time.sleep(10)
 
@@ -116,6 +117,28 @@ try:
     f = open(name_log, "a")
     f.write( '\n' + "mounted at: " + timestr)
     f.close()
+    
+    try:                                     #Loop-Auswahl:
+        l = open("/home/pi/NAS/loop.txt", "r")
+        data = l.read()
+        data = [int(i) for i in data]
+        data = sum(data)
+        l.close()
+
+        if data == 1:
+            print("-------------------------------------Loop1-----------------------------")
+        if data == 2:
+            print("-------------------------------------Loop2-----------------------------")
+        if data == 3:
+            print("-------------------------------------Loop3-----------------------------")
+        if data < 1 or data >3:
+            print("-------------------------------------error-----------------------------")
+    except:
+        e = sys.exc_info()[1]
+        print("Error: ", e)
+
+
+
 except:
     e = sys.exc_info()[1]
     print("Error: ", e)
