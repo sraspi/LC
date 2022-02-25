@@ -198,7 +198,7 @@ try:
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             f = open(name_log, "a")
-            f.write( '\n' + "LC3.5.py started at: " + timestr)
+            f.write("LC3.5.py started at: " + timestr)
             f.close()
             Start = False
         ads()                                # ADS-Sensorwerte abfragen
