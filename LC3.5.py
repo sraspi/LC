@@ -187,7 +187,7 @@ def ads(): # Read all the ADC channel values in a list.
     I_pi = round((I_ges - I_bat),1)
     A2_mi = round(sum(A2)/5,1) # I_ges+I_bat
     U_bat = round(sum(A3)/5,2)
-    
+       
     
 try:
     while True:
@@ -198,7 +198,7 @@ try:
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             f = open(name_log, "a")
-            f.write("LC3.5.py started at: " + timestr)
+            f.write("\n" + "LC3.5.py started at: " + timestr + "  Loop: " + str(data))
             f.close()
             Start = False
         ads()                                # ADS-Sensorwerte abfragen
@@ -240,7 +240,7 @@ try:
             
             try:
                 fobj_out = open(name_log,  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-3.5 shutdown-" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-----3.5 shutdown-----" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
@@ -248,7 +248,7 @@ try:
                 fobj_out.close()
 
             
-            if t2 == 15 and mov:
+            if t2 == 20 and mov:
                 Datum = time.strftime("%Y_%m_%d")
                 shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                 mov = False
