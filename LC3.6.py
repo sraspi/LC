@@ -198,7 +198,7 @@ try:
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             f = open(name_log, "a")
-            f.write("\n" + "LC3.5.py started at: " + timestr + "  Loop: " + str(data))
+            f.write("\n" + "LC3.6.py started at: " + timestr + "  Loop: " + str(data))
             f.close()
             Start = False
         ads()                                # ADS-Sensorwerte abfragen
@@ -220,12 +220,9 @@ try:
         check_U12()        
         check_U14()
     
-        t1 = t2
-        if t2-t1 == 0:
+        
+        if t2 == 18:
             th = datetime.datetime.now()
-            t2 = th.hour
-            print("nothing to do")
-        else:
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
             time.sleep(0.1)
@@ -240,15 +237,15 @@ try:
             
             try:
                 fobj_out = open(name_log,  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "-----3.5 shutdown-----" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--3.6 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!---3.5 shutdown---" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--3.6 shutdown--" + '\n' )
                 fobj_out.close()
 
             
-            if t2 == 20 and mov:
+            if t2 == 18 and mov:
                 Datum = time.strftime("%Y_%m_%d")
                 shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                 mov = False
