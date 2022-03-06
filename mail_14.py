@@ -12,7 +12,7 @@ def mail14():                       #E-Mail an sraspi21@gmail.com:
     Betreff = str("U_bat>14V")
     sender_email = "sraspi21@gmail.com"
     receiver_email = "sraspi21@gmail.com"
-    password = "StJ19gmail"
+    password = "rwnqyynanebneqbj"
     #password = input("Type your password and press enter:")
 
     # Create a multipart message and set headers

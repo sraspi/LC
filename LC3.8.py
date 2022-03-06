@@ -197,12 +197,18 @@ try:
             th = datetime.datetime.now()
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
-            f = open(name_log, "a")
-            f.write("\n" + "LC3.6.py started at: " + timestr + "  Loop: " + str(data))
-            f.close()
+            try:
+                f = open(name_log, "a")
+                f.write("\n" + "LC3.8.py started at: " + timestr + "  Loop: " + str(data))
+                f.close()
+            except:
+                print("nothing")
             Start = False
-        ads()                                # ADS-Sensorwerte abfragen
-       
+        try:
+            ads()                                # ADS-Sensorwerte abfragen
+        except:
+            print("nothing")
+
         #Bildschirmnausgabe und Datei schreiben:
         Endzeit = time.time()
         delta = (Endzeit - Startzeit)/60/60  # Zeit in Stunden seit Versuchsstart
@@ -210,9 +216,12 @@ try:
         cput = float(cpu.temperature)
         Datum=time.strftime("%Y-%m-%d %H:%M:%S")
         print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             I_ges: "  + str(I_ges) + "        I_bat: " + str(I_bat) + "             I_pi "  + str(I_pi)   +  "             U_bat: "  + str(U_bat))
-        fobj_out = open(Dateiname,"a" )
-        fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(I_ges) +  ' , ' + str(I_bat) + " , " + str(I_pi) + ' , ' + str(U_bat) + ' , ' + str(cput) + '\n' )
-        fobj_out.close()
+        try:
+            fobj_out = open(Dateiname,"a" )
+            fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(I_ges) +  ' , ' + str(I_bat) + " , " + str(I_pi) + ' , ' + str(U_bat) + ' , ' + str(cput) + '\n' )
+            fobj_out.close()
+        except:
+            print("nothing")
         time.sleep(10)
         th = datetime.datetime.now()
         t2 = th.hour
@@ -237,11 +246,11 @@ try:
             
             try:
                 fobj_out = open(name_log,  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--3.6 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--3.8 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--3.6 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--3.8 shutdown--" + '\n' )
                 fobj_out.close()
 
             

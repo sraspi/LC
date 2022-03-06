@@ -48,8 +48,22 @@ GPIO.setup(23, GPIO.IN, GPIO.PUD_DOWN)        #K2_status_16_gn
 GPIO.output(15, GPIO.LOW)                     #K2_init_LOW
 GPIO.output(18, GPIO.HIGH)                    #K2_OUT_init
 
+GPIO.output(9,GPIO.HIGH)
+time.sleep(0.2)
+GPIO.output(9,GPIO.LOW)
+time.sleep(1)
+GPIO.output(10,GPIO.HIGH)
+time.sleep(0.2)
+GPIO.output(10,GPIO.LOW)
 
-
+time.sleep(2)
+GPIO.output(11,GPIO.HIGH)
+time.sleep(0.2)
+GPIO.output(11, GPIO.LOW)
+time.sleep(1)
+GPIO.output(12,GPIO.HIGH)
+time.sleep(0.2)
+GPIO.output(12,GPIO.LOW)
 
 #ADS settings
 values = [0]*4
@@ -103,7 +117,7 @@ def check_U14():
             #Zustand K2 in LC.log schreiben + 1*Email
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + "\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: "  + "--------U_bat>13.75V-----" + str(Ub14) + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: "  + "--------U_bat>13.75V-----" + str(Ub14) + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
@@ -245,18 +259,11 @@ try:
                 fobj_out.close()
 
             
-            try:
-                if t2 == 18 and mov:
-                    Datum = time.strftime("%Y_%m_%d")
-                    shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
-                    mov = False
-                    mail_lc_status.lc_mail()
-            except:
-                fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR, no file moving" + '\n' )
-                fobj_out.close()
-
-
+            if t2 == 18 and mov:
+                Datum = time.strftime("%Y_%m_%d")
+                shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
+                mov = False
+                mail_lc_status.lc_mail()
         
             
             time.sleep(10)
