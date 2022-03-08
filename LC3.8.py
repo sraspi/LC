@@ -110,13 +110,19 @@ def check_U14():
                 fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "network ERROR!! --------U_bat>13.75V-----" + str(Ub14) + '\n' )
                 fobj_out.close()
 
+
+time.sleep(60)                       #Service-Zeit vor Start des Programms!
+
 try:
-    name_log = "/home/pi/NAS/LC.log"
-    subprocess.call("/home/pi/LC/mount.sh")
-    timestr = time.strftime("%Y%m%d_%H%M%S")
-    f = open(name_log, "a")
-    f.write( '\n' + "mounted at: " + timestr)
-    f.close()
+    try:
+        subprocess.call("/home/pi/LC/mount.sh")
+        print("mounted")
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        f = open("/home/pi/NAS/LC.log", "a")
+        f.write( '\n' + "mounted at: " + timestr)
+        f.close()
+    except:
+        print("NAS not mounted")
     
     try:                                     #Loop-Auswahl:
         l = open("/home/pi/NAS/loop.txt", "r")
@@ -135,15 +141,14 @@ try:
             print("-------------------------------------error-----------------------------")
     except:
         e = sys.exc_info()[1]
-        print("Error: ", e)
+        print("not mounted, Error: ", e)
 
 
 
 except:
     e = sys.exc_info()[1]
     print("Error: ", e)
-    name_log = "/home/pi/data/LC.log"
-    fobj_out = open(name_log, "a" )
+    fobj_out = open("/home/pi/data/LC.log", "a" )
     fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + " Error: " + str(e) + '\n' )
     fobj_out.close()
     
@@ -192,22 +197,21 @@ def ads(): # Read all the ADC channel values in a list.
 try:
     while True:
         if Start:
-            Dateiname = "/home/pi/data/logfile.txt"
             Startzeit = time.time() #Versuchsstartzeit
             th = datetime.datetime.now()
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             try:
-                f = open(name_log, "a")
+                f = open("/home/pi/NAS/LC.log", "a")
                 f.write("\n" + "LC3.8.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
             except:
-                print("nothing")
+                print("NAS not mounted, started LC3.8 without NAS")
             Start = False
         try:
             ads()                                # ADS-Sensorwerte abfragen
         except:
-            print("nothing")
+            print("ADS-ERROR")
 
         #Bildschirmnausgabe und Datei schreiben:
         Endzeit = time.time()
@@ -217,7 +221,7 @@ try:
         Datum=time.strftime("%Y-%m-%d %H:%M:%S")
         print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             I_ges: "  + str(I_ges) + "        I_bat: " + str(I_bat) + "             I_pi "  + str(I_pi)   +  "             U_bat: "  + str(U_bat))
         try:
-            fobj_out = open(Dateiname,"a" )
+            fobj_out = open("/home/pi/data/logfile.txt", "a" )
             fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(I_ges) +  ' , ' + str(I_bat) + " , " + str(I_pi) + ' , ' + str(U_bat) + ' , ' + str(cput) + '\n' )
             fobj_out.close()
         except:
@@ -245,7 +249,7 @@ try:
             GPIO.output(27, GPIO.LOW)           # K1_OFF_init
             
             try:
-                fobj_out = open(name_log,  "a" )
+                fobj_out = open("/home/pi/NAS/LC.log",  "a" )
                 fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--3.8 shutdown--" + '\n' )
                 fobj_out.close()
             except:
@@ -281,7 +285,7 @@ try:
 except KeyboardInterrupt:
     print("keyboardInterrupt")
     timestr = time.strftime("%Y%m%d_%H%M%S")
-    d = open(Dateiname, "a")
+    d = open("/home/pi/data/logfile.txt", "a")
     d.write("KeyboardInterrupt at: " + timestr + "\n")
     d.close()
     GPIO.cleanup()
