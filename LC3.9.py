@@ -132,7 +132,7 @@ try:
         l.close()
 
         if data == 1:
-            print("------------------Loop1 inkl. Annemie --------------")
+            print("--Loop1 GPIO_10_kleine Schleife --")
             GPIO.output(10, GPIO.LOW)          # K4_init
             GPIO.output(10, GPIO.HIGH)         # K4_ON_gelb
             time.sleep(0.1)
@@ -143,7 +143,7 @@ try:
             time.sleep(0.1)
             GPIO.output(12, GPIO.LOW)         # K5_OFF
         if data == 2:
-            print("------------------Loop2-----------------------------")
+            print("--Loop2 GPIO9_groﬂe Schleife------")
             GPIO.output(9, GPIO.LOW)          # K4_init
             GPIO.output(9, GPIO.HIGH)         # N_K4_ON_
             time.sleep(0.1)
