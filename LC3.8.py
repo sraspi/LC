@@ -234,7 +234,7 @@ try:
         check_U14()
     
         
-        if t2 == 18:
+        if t2 == 20:
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
