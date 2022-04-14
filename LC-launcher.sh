@@ -2,4 +2,4 @@
 #LC-laucher.sh
 cd /
 cd /home/pi/LC
-python3 LC3.9.py
+python3 LC4.0.py
