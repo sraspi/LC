@@ -18,7 +18,7 @@ import shutil
 import mail_lc_status
 import mail_14
 import mail_12
-import ping1_1
+import wifi
 
 
 # Import the ADS1115 module.
@@ -98,11 +98,11 @@ def check_U14():
         print("K2_OFF(HIGH)")
         if Ub14:
             try:
-                ping1_1.p()
+                wifi.p()
                 mail_14.mail14()
             except:
                 ("Error by mail-sent")
-            Ub14 = False
+            
             #Zustand K2 in LC.log schreiben + 1*Email
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
@@ -112,13 +112,14 @@ def check_U14():
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
                 fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "network ERROR!! --------U_bat>13.75V-----" + str(Ub14) + '\n' )
                 fobj_out.close()
+            Ub14 = False
 
 
 time.sleep(60)                       #Service-Zeit vor Start des Programms!
 
 try:
     try:
-        ping1_1.p()
+        wifi.p()
         subprocess.call("/home/pi/LC/mount.sh")
         print("mounted")
         timestr = time.strftime("%Y%m%d_%H%M%S")
@@ -129,7 +130,7 @@ try:
         print("NAS not mounted")
     
     try:                                     #Loop-Auswahl:
-        ping1_1.p()
+        wifi.p()
         l = open("/home/pi/NAS/loop.txt", "r")
         data = l.read()
         data = [int(i) for i in data]
@@ -137,11 +138,33 @@ try:
         l.close()
 
         if data == 1:
-            print("-------------------------------------Loop1-----------------------------")
+            print("--Loop1 GPIO_10_kleine Schleife --")
+            GPIO.output(10, GPIO.LOW)          # K4_init
+            GPIO.output(10, GPIO.HIGH)         # K4_ON_gelb
+            time.sleep(0.1)
+            GPIO.output(10, GPIO.LOW)         # K4_OFF
+            
+            GPIO.output(12, GPIO.LOW)          # K5_init
+            GPIO.output(12, GPIO.HIGH)         # K5_ON
+            time.sleep(0.1)
+            GPIO.output(12, GPIO.LOW)         # K5_OFF
         if data == 2:
-            print("-------------------------------------Loop2-----------------------------")
+            print("--Loop2 GPIO9_groЯe Schleife------")
+            GPIO.output(9, GPIO.LOW)          # K4_init
+            GPIO.output(9, GPIO.HIGH)         # N_K4_ON_
+            time.sleep(0.1)
+            GPIO.output(9, GPIO.LOW)         # N_K4_OFF
         if data == 3:
-            print("-------------------------------------Loop3-----------------------------")
+            print("-----------------Loop3 grosse Schleife exkl. Baum-- --")
+            GPIO.output(9, GPIO.LOW)          # K4_init
+            GPIO.output(9, GPIO.HIGH)         # K4_ON_
+            time.sleep(0.1)
+            GPIO.output(9, GPIO.LOW)         # K4_OFF
+            
+            GPIO.output(11, GPIO.LOW)          # K5_init
+            GPIO.output(11, GPIO.HIGH)         # K5_ON
+            time.sleep(0.1)
+            GPIO.output(11, GPIO.LOW)         # K5_OFF
         if data < 1 or data >3:
             print("-------------------------------------error-----------------------------")
     except:
@@ -207,12 +230,12 @@ try:
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             try:
-                ping1_1.p()
+                wifi.p()
                 f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "LC4.0.py started at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "LC4.1.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
             except:
-                print("NAS not mounted, started LC4.0 without NAS")
+                print("NAS not mounted, started LC4.1 without NAS")
             Start = False
         try:
             ads()                                # ADS-Sensorwerte abfragen
@@ -241,7 +264,7 @@ try:
     
         
         if t2 == 21:
-            ping1_1.p()
+            wifi.p()
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
@@ -257,11 +280,11 @@ try:
             
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--4.0 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--4.1 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--4.0 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--4.1 shutdown--" + '\n' )
                 fobj_out.close()
 
             
