@@ -80,11 +80,11 @@ def check_U12():
     if U_bat > 12:
         print("U_bat>12V")
     else:
-        print("U_bat<12V, no reboot, shutdown now")
+        print("U_bat<12V,")
         mail_12.mail12()
-        time.sleep(120)
-        subprocess.call("/home/pi/LC/shutdown.sh")
-        time.sleep(10)
+        #time.sleep(120)
+        #subprocess.call("/home/pi/LC/shutdown.sh")
+        #time.sleep(10)
 
 def check_U14():
     global Ub14
@@ -138,33 +138,43 @@ try:
         l.close()
 
         if data == 1:
-            print("--Loop1 GPIO_10_kleine Schleife --")
+            print("--Loop1 GPIO9_grosse Schleife------")
+
+            #mit GPIO9 auf grosse Schleife:
+            GPIO.output(9, GPIO.LOW)          # K4_init
+            GPIO.output(9, GPIO.HIGH)         # N_K4_ON_
+            time.sleep(0.1)
+            GPIO.output(9, GPIO.LOW)         # N_K4_OFF
+            
+            #mit GPIO11 Baum include:
+            GPIO.output(11, GPIO.LOW)          # K4_init
+            GPIO.output(11, GPIO.HIGH)         # N_K4_ON_
+            time.sleep(0.1)
+            GPIO.output(11, GPIO.LOW)         # N_K4_OFF
+
+        if data == 2:
+            print("--Loop2 GPIO_10_kleine Schleife --")
             GPIO.output(10, GPIO.LOW)          # K4_init
             GPIO.output(10, GPIO.HIGH)         # K4_ON_gelb
             time.sleep(0.1)
             GPIO.output(10, GPIO.LOW)         # K4_OFF
             
-            GPIO.output(12, GPIO.LOW)          # K5_init
-            GPIO.output(12, GPIO.HIGH)         # K5_ON
-            time.sleep(0.1)
-            GPIO.output(12, GPIO.LOW)         # K5_OFF
-        if data == 2:
-            print("--Loop2 GPIO9_groЯe Schleife------")
-            GPIO.output(9, GPIO.LOW)          # K4_init
-            GPIO.output(9, GPIO.HIGH)         # N_K4_ON_
-            time.sleep(0.1)
-            GPIO.output(9, GPIO.LOW)         # N_K4_OFF
         if data == 3:
             print("-----------------Loop3 grosse Schleife exkl. Baum-- --")
+
+            #mit GPIO10 Baum exclude:
+            GPIO.output(10, GPIO.LOW)          # K4_init
+            GPIO.output(10, GPIO.HIGH)         # K4_ON_gelb
+            time.sleep(0.1)
+            GPIO.output(10, GPIO.LOW)         # K4_OFF
+
+            #mit GPIO9 wieder auf grosse Schleife schalten
             GPIO.output(9, GPIO.LOW)          # K4_init
             GPIO.output(9, GPIO.HIGH)         # K4_ON_
             time.sleep(0.1)
             GPIO.output(9, GPIO.LOW)         # K4_OFF
             
-            GPIO.output(11, GPIO.LOW)          # K5_init
-            GPIO.output(11, GPIO.HIGH)         # K5_ON
-            time.sleep(0.1)
-            GPIO.output(11, GPIO.LOW)         # K5_OFF
+            
         if data < 1 or data >3:
             print("-------------------------------------error-----------------------------")
     except:
@@ -232,10 +242,10 @@ try:
             try:
                 wifi.p()
                 f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "LC4.1.py started at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "LC4.2.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
             except:
-                print("NAS not mounted, started LC4.1 without NAS")
+                print("NAS not mounted, started LC4.2.py without NAS")
             Start = False
         try:
             ads()                                # ADS-Sensorwerte abfragen
@@ -280,11 +290,11 @@ try:
             
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--4.1 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--4.2 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--4.1 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--4.2 shutdown--" + '\n' )
                 fobj_out.close()
 
             
