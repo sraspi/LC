@@ -25,3 +25,8 @@ LS-Problem NAS-mount wenn Fritzbox aus-boot-Vorgang bleibt bei NAS-mount stehen,
 beim booten 10 Sekunden Pause (über bootjobs.sh sleep 10)
 
 01.01.2022 LC2.1.py verified
+21.04.2022: WLAN-Probleme mit USB-Wifi: 
+-Wifi autopower off- USBmax double- K4/K5 Verkabelung OK 21.04.2022
+Loop1: grosse Schleife inkl. Baum
+Loop2: kleine Schleife
+Loop3: grosse Schleife exkl. Baum
