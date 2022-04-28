@@ -148,9 +148,10 @@ try:
         data = sum(data)
         l.close()
         
-        #if wd == "Sunday" or wd == "Tuesday" or wd == "Thursday":
-            #data = 2
-            
+        if wd == "Sunday" or wd == "Tuesday" or wd == "Thursday":
+            data = 2
+        if wd == "Friday":
+            data = 3
 
         if data == 1:
             print("--Loop1 GPIO9_grosse Schleife------")
@@ -258,10 +259,10 @@ try:
             try:
                 wifi.p()
                 f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "LC4.4.py started at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "LC4.5.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
             except:
-                print("NAS not mounted, started LC4.2.py without NAS")
+                print("NAS not mounted, started LC4.5.py without NAS")
             Start = False
         try:
             ads()                                # ADS-Sensorwerte abfragen
@@ -306,11 +307,11 @@ try:
             
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--4.4 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--4.5 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--4.4 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--4.5 shutdown--" + '\n' )
                 fobj_out.close()
 
             
