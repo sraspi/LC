@@ -19,14 +19,14 @@ import calendar
 
 curr_date = date.today()
 wd = (calendar.day_name[curr_date.weekday()])
-print(wd)
+print(wd, "LC4.5 started") 
 
 
 
 import mail_lc_status
 import mail_14
 import mail_12
-import wifi
+
 
 
 # Import the ADS1115 module.
@@ -106,7 +106,7 @@ def check_U14():
         print("K2_OFF(HIGH)")
         if Ub14:
             try:
-                wifi.p()
+                
                 mail_14.mail14()
             except:
                 ("Error by mail-sent")
@@ -127,7 +127,7 @@ time.sleep(60)                       #Service-Zeit vor Start des Programms!
 
 try:
     try:
-        wifi.p()
+        
         subprocess.call("/home/pi/LC/mount.sh")
         print("mounted")
         timestr = time.strftime("%Y%m%d_%H%M%S")
@@ -141,7 +141,7 @@ try:
         curr_date = date.today()
         wd = (calendar.day_name[curr_date.weekday()]) #weekday
         print(wd)
-        wifi.p()
+        
         l = open("/home/pi/NAS/loop.txt", "r")
         data = l.read()
         data = [int(i) for i in data]
@@ -150,8 +150,10 @@ try:
         
         if wd == "Sunday" or wd == "Tuesday" or wd == "Thursday":
             data = 2
-        if wd == "Friday":
+        if wd == "Saturday":
             data = 3
+
+            
 
         if data == 1:
             print("--Loop1 GPIO9_grosse Schleife------")
@@ -257,7 +259,7 @@ try:
             t1 = th.hour
             timestr = time.strftime("%Y%m%d_%H%M%S")
             try:
-                wifi.p()
+                
                 f = open("/home/pi/NAS/LC.log", "a")
                 f.write("\n" + "LC4.5.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
@@ -291,7 +293,7 @@ try:
     
         
         if t2 == 21:
-            wifi.p()
+            
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
