@@ -284,7 +284,7 @@ try:
             fobj_out.close()
         except:
             print("nothing")
-        time.sleep(10)
+        time.sleep(60)
         th = datetime.datetime.now()
         t2 = th.hour
         
