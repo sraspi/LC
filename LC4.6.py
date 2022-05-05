@@ -26,6 +26,7 @@ print(wd)
 import mail_lc_status
 import mail_14
 import mail_12
+import mailstart
 import wifi
 
 
@@ -123,17 +124,18 @@ def check_U14():
             Ub14 = False
 
 
-time.sleep(60)                       #Service-Zeit vor Start des Programms!
+time.sleep(60) #Service-Zeit vor Start des Programms!
 
 try:
     try:
         wifi.p()
+        mailstart.start()
         subprocess.call("/home/pi/LC/mount.sh")
         print("mounted")
         timestr = time.strftime("%Y%m%d_%H%M%S")
         f = open("/home/pi/NAS/LC.log", "a")
         f.write( '\n' + "mounted at: " + timestr)
-        f.close()
+        f.close() 
     except:
         print("NAS not mounted")
     
@@ -148,8 +150,11 @@ try:
         data = sum(data)
         l.close()
         
-        #if wd == "Sunday" or wd == "Tuesday" or wd == "Thursday":
-            #data = 2
+        if wd == "Sunday" or wd == "Tuesday" or wd == "Thursday":
+            data = 2
+        if wd == "Friday":
+            data = 3
+
             
 
         if data == 1:
@@ -258,10 +263,10 @@ try:
             try:
                 wifi.p()
                 f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "LC4.4.py started at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "LC4.6.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
             except:
-                print("NAS not mounted, started LC4.2.py without NAS")
+                print("NAS not mounted, started LC4.6.py without NAS")
             Start = False
         try:
             ads()                                # ADS-Sensorwerte abfragen
@@ -306,11 +311,11 @@ try:
             
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--4.4 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--4.6 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--4.4 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--4.6 shutdown--" + '\n' )
                 fobj_out.close()
 
             
