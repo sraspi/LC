@@ -342,13 +342,16 @@ try:
                     Datum = time.strftime("%Y_%m_%d")
                     shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                     mov = False
-                    mail_lc_status.lc_mail()
+                    
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
                 fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR, no file moving" + '\n' )
                 fobj_out.close()
 
-
+            try:
+                mail_lc_status.lc_mail()
+            except:
+                print("status mail failed")
         
             
             time.sleep(20)

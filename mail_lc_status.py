@@ -3,6 +3,8 @@ def lc_mail():                       #E-Mail an sraspi21@gmail.com:
         import urllib
         import smtplib, ssl
         import email
+        import sys
+        import time
         from email import encoders
         from email.mime.base import MIMEBase
         from email.mime.multipart import MIMEMultipart
