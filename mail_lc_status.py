@@ -14,8 +14,8 @@ def lc_mail():                       #E-Mail an sraspi21@gmail.com:
         Betreff = str("loop-control-log")
         sender_email = "sraspi21@gmail.com"
         receiver_email = "sraspi21@gmail.com"
-        password = "1rwnqyynanebneqbj"
-        #password = input("Type your password and press enter:")
+        password = "rwnqyynanebneqbj"
+        #password = Inputs("Type your password and press enter:")
 
         # Create a multipart message and set headers
         message = MIMEMultipart()
