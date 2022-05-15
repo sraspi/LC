@@ -17,12 +17,6 @@ import shutil
 from datetime import date
 import calendar
 
-curr_date = date.today()
-wd = (calendar.day_name[curr_date.weekday()])
-print(wd)
-
-
-
 import mail_lc_status
 import mail_14
 import mail_12
@@ -163,6 +157,8 @@ try:
         if wd == "Sunday" or wd == "Tuesday" or wd == "Thursday":
             data = 2
         if wd == "Friday":
+            data = 3
+        if wd == "Sunday":
             data = 3
         
 

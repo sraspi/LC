@@ -4,5 +4,5 @@ cd
 cd /home/pi/noip-2.1.9-1
 sudo noip2
 cd /home/pi/LC/
-sleep 60
+sleep 180
 sh LC-launcher.sh
