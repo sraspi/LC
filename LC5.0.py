@@ -216,7 +216,7 @@ except:
     e = sys.exc_info()[1]
     print("Error: ", e)
     fobj_out = open("/home/pi/data/LC.log", "a" )
-    fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "loop remains at 1, Error: " + str(e) + '\n' )
+    fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "generel network Error: " + str(e) + '\n' )
     fobj_out.close()
     
     
@@ -271,13 +271,13 @@ try:
             try:
             
                 f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "LC4.9.py started at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "LC5.0.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
             except:
                 f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "network error, LC4.9.py started without NAS at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "network error, LC5.0.py started without NAS at: " + timestr + "  Loop: " + str(data))
                 f.close()
-                print("NAS not mounted, started LC4.9.py without NAS")
+                print("NAS not mounted, started LC5.0.py without NAS")
             Start = False
         try:
             ads()                                # ADS-Sensorwerte abfragen
@@ -305,7 +305,7 @@ try:
         check_U14()
     
         
-        if t2 == 21:
+        if t2 == 19:
             
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
@@ -322,16 +322,16 @@ try:
             
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--LC4.9 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--LC5.0 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--LC4.9 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--LC5.0 shutdown--" + '\n' )
                 fobj_out.close()
 
             
             try:
-                if t2 == 21 and mov:
+                if t2 == 19 and mov:
                     Datum = time.strftime("%Y_%m_%d")
                     shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                     mov = False
