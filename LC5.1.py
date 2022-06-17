@@ -77,16 +77,19 @@ U_bat = 0
 Start= True
 mov = True
 Ub14 = True
+U_min = True
+
 
 def check_U12():
-    if U_bat > 12:
+    if U_bat > 12 and U_min:
         print("U_bat>12V")
     else:
         print("U_bat<12V,")
         mail_12.mail12()
-        #time.sleep(120)
+        time.sleep(20)
         #subprocess.call("/home/pi/LC/shutdown.sh")
-        #time.sleep(10)
+        time.sleep(10)
+       
 
 def check_U14():
     global Ub14
@@ -271,13 +274,13 @@ try:
             try:
             
                 f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "LC5.0.py started at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "LC5.1.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
             except:
-                f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "network error, LC5.0.py started without NAS at: " + timestr + "  Loop: " + str(data))
+                f = open("/home/pi/data/LC.log", "a")
+                f.write("\n" + "network error, LC5.1.py started without NAS at: " + timestr + "  Loop: " + str(data))
                 f.close()
-                print("NAS not mounted, started LC5.0.py without NAS")
+                print("NAS not mounted, started LC5.1.py without NAS")
             Start = False
         try:
             ads()                                # ADS-Sensorwerte abfragen
@@ -297,14 +300,19 @@ try:
             fobj_out.close()
         except:
             print("nothing")
-        time.sleep(60)
+        time.sleep(6)
         th = datetime.datetime.now()
         t2 = th.hour
         
-        check_U12()        
+        if U_min:
+            check_U12()     
+            U_min = False   
+
         check_U14()
     
-        
+        print(t2)
+        time.sleep(20)
+
         if t2 == 20:
             
             th = datetime.datetime.now()
@@ -322,11 +330,11 @@ try:
             
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--LC5.0 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--LC5.1 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--LC5.0 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--LC5.1 shutdown--" + '\n' )
                 fobj_out.close()
 
             
