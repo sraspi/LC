@@ -157,8 +157,8 @@ try:
         data = sum(data)
         l.close()
         print(data)
-        #if wd == "Tuesday" or wd == "Thursday":
-            #data = 2
+        if wd == "Tuesday" or wd == "Thursday":
+            data = 2
         #if wd == "Friday":
             #data = 3
         
@@ -309,9 +309,7 @@ try:
             U_min = False   
 
         check_U14()
-    
-        print(t2)
-        time.sleep(20)
+        time.sleep(102)
 
         if t2 == 20:
             
