@@ -10,7 +10,7 @@ def Uend(U_end):                       #E-Mail an sraspi21@gmail.com:
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
 
-        Inhalt = ("U-End Gel-Accu um ca. 20:00 vor dem Abschalten " ) 
+        Inhalt = ("U-End Gel-Accu vor dem Abschalten " ) 
         Betreff = ("LC finished, U_end: " +str(U_end) + " V")
         sender_email = "sraspi21@gmail.com"
         receiver_email = "sraspi21@gmail.com"

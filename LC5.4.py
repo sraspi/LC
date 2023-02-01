@@ -80,13 +80,13 @@ U_min = True
 
 
 def check_U12():
-    if U_bat > 12.3 and U_min:
+    if U_bat > 12.4 and U_min:
         print("U_bat>12V")
     else:
         print("U_bat<12V,")
         mail_12.mail12()
         time.sleep(20)
-        subprocess.call("/home/pi/LC/shutdown.sh")
+        #subprocess.call("/home/pi/LC/shutdown.sh")
         time.sleep(10)
        
 
@@ -286,7 +286,7 @@ try:
             U_end = U_bat
         except:
             print("ADS-ERROR")
-        print(U_end)
+        
         #Bildschirmnausgabe und Datei schreiben:
         Endzeit = time.time()
         delta = (Endzeit - Startzeit)/60/60  # Zeit in Stunden seit Versuchsstart
@@ -311,7 +311,7 @@ try:
         check_U14()
         time.sleep(102)
 
-        if t2 == 14:
+        if t2 == 20 or U_end < 12.4:
             
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
@@ -337,7 +337,7 @@ try:
 
             
             try:
-                if t2 == 14 and mov:
+                if t2 == 20 and mov:
                     Datum = time.strftime("%Y_%m_%d")
                     shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                     mov = False
