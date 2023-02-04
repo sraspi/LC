@@ -86,10 +86,10 @@ U_min = True
 
 
 def check_U12():
-    if U_bat > 12.5 and U_min:
-        print("U_bat>12V")
+    if U_bat > 12.45 and U_min:
+        print("U_bat>12.45V")
     else:
-        print("U_bat<12.5V,")
+        print("U_bat<12.45V,")
         try:
             mail_12.mail12()
             time.sleep(20)
@@ -276,7 +276,7 @@ def ads(): # Read all the ADC channel values in a list.
     I_bat = round(sum(A0)/5,1) #I_bat
     I_ges = round(sum(A1)/5,1) #I_ges
     I_pi = round((I_ges - I_bat),1)
-    A2_mi = round(sum(A2)/5,1) # I_ges+I_bat
+    A2_mi = round(sum(A2)/5,1) # I_pi?
     U_bat = round(sum(A3)/5,3)
        
     
@@ -290,13 +290,13 @@ try:
             try:
             
                 f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "LC5.5.py started at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "LC5.6.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
             except:
                 f = open("/home/pi/data/LC.log", "a")
-                f.write("\n" + "network error, LC5.5.py started without NAS at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "network error, LC5.6.py started without NAS at: " + timestr + "  Loop: " + str(data))
                 f.close()
-                print("NAS not mounted, started LC5.5.py without NAS")
+                print("NAS not mounted, started LC5.6.py without NAS")
             Start = False
         try:
             ads()                                # ADS-Sensorwerte abfragen
@@ -316,7 +316,7 @@ try:
         cpu = CPUTemperature()
         cput = float(cpu.temperature)
         Datum=time.strftime("%Y-%m-%d %H:%M:%S")
-        print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' + "             I_ges: "  + str(I_ges) + "        I_bat: " + str(I_bat) + "             I_pi "  + str(I_pi)   +  "             U_bat: "  + str(U_bat))
+        print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' +  "        I_ges: "  + str(I_ges) + "        I_bat: " + str(I_bat) + "             I_pi "  + str(I_pi)   +  "             U_bat: "  + str(U_bat))
         try:
             fobj_out = open("/home/pi/data/logfile.txt", "a" )
             fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(I_ges) +  ' , ' + str(I_bat) + " , " + str(I_pi) + ' , ' + str(U_bat) + ' , ' + str(cput) + '\n' )
@@ -342,7 +342,7 @@ try:
         check_U14()
         time.sleep(102)
 
-        if t2 == 20 or U_end < 12.5:
+        if t2 == 20 or U_end < 12.45:
             
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
@@ -359,11 +359,11 @@ try:
             
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--LC5.1 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--LC5.6 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--LC5.1 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--LC5.6 shutdown--" + '\n' )
                 fobj_out.close()
 
             
