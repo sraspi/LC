@@ -349,7 +349,7 @@ try:
         check_U14()
         time.sleep(102)
 
-        if t2 == 20:
+        if t2 == 9:
             
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
@@ -375,7 +375,7 @@ try:
 
             
             try:
-                if t2 == 20 and mov:
+                if t2 == 9 and mov:
                     Datum = time.strftime("%Y_%m_%d")
                     shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                     mov = False
@@ -397,7 +397,7 @@ try:
         
             
             time.sleep(20)
-            #subprocess.call("/home/pi/LC/shutdown.sh")
+            subprocess.call("/home/pi/LC/shutdown.sh")
             print("\nBye")
 
     
