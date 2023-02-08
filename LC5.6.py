@@ -30,7 +30,9 @@ try:
     adc = ADS1115()
 
 except:
-    print("import-error")
+    e = sys.exc_info()[1]
+    print("Import-error: ", e)
+    print()
    
 
 
@@ -97,7 +99,7 @@ def check_U12():
             e = sys.exc_info()[1]
             print("Error: ", e)
             fobj_out = open("/home/pi/data/LC.log", "a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "mail_12 error: " + str(e) + '\n' )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "  mail_12 error: " + str(e) + '\n' )
             fobj_out.close()
             #subprocess.call("/home/pi/LC/shutdown.sh")
             time.sleep(10)
@@ -119,33 +121,33 @@ def check_U14():
                 mail_14.mail14()
             except:
                 e = sys.exc_info()[1]
-                print("Error: ", e)
+                print("mail_14-Error: ", e)
                 fobj_out = open("/home/pi/data/LC.log", "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "mail_12 error: " + str(e) + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     " + "mail_14 error: " + str(e) + '\n' )
                 fobj_out.close()
             
             #Zustand K2 in LC.log schreiben + 1*Email
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + "\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: "  + "--------U_bat>13.75V-----" + str(Ub14) + '\n' )
+                fobj_out.write("\n" + "\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      "  + "--------U_bat>13.75V-----" + str(Ub14) + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "network ERROR!! --------U_bat>13.75V-----" + str(Ub14) + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + "network ERROR!! --------U_bat>13.75V-----" + str(Ub14) + '\n' )
                 fobj_out.close()
             Ub14 = False
 
 
-time.sleep(6) #Service-Zeit vor Start des Programms!
+time.sleep(90) #Service-Zeit vor Start des Programms!
 
 try:
     try:
         mailstart.start()
     except:
         e = sys.exc_info()[1]
-        print("Error: ", e)
+        print("Error by mailstart: ", e)
         fobj_out = open("/home/pi/data/LC.log", "a" )
-        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "mailstart failed" + str(e) + '\n' )
+        fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") +       "  mailstart failed   " + str(e) + '\n' )
         fobj_out.close()
     try:
        
@@ -154,14 +156,17 @@ try:
         print("mounted")
         timestr = time.strftime("%Y%m%d_%H%M%S")
         f = open("/home/pi/NAS/LC.log", "a")
-        f.write( '\n' + "mounted at: " + timestr)
+        f.write( "\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "  mounted  ")
         f.close() 
     except:
         timestr = time.strftime("%Y%m%d_%H%M%S")
+        e = sys.exc_info()[1]
+        print("Error by mounting: ", e)
+        print()
         f = open("/home/pi/data/LC.log", "a")
-        f.write( '\n' + "NAS-mount-error: " + timestr)
+        f.write(  "\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "  NAS-mount-error: " + str(e) + '\n' )
         f.close() 
-        print("NAS not mounted")
+        print("NAS-mount-error")
     
     try:                                     #Loop-Auswahl:
         curr_date = date.today()
@@ -235,7 +240,7 @@ except:
     e = sys.exc_info()[1]
     print("Error: ", e)
     fobj_out = open("/home/pi/data/LC.log", "a" )
-    fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "generel network Error: " + str(e) + '\n' )
+    fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + "generel network Error: " + str(e) + '\n' )
     fobj_out.close()
     
     
@@ -278,7 +283,9 @@ def ads(): # Read all the ADC channel values in a list.
     I_pi = round((I_ges - I_bat),1)
     A2_mi = round(sum(A2)/5,1) # I_pi?
     U_bat = round(sum(A3)/5,3)
-       
+    if (I_ges<0):
+        I_pi = I_bat
+    
     
 try:
     while True:
@@ -303,11 +310,11 @@ try:
             U_end = U_bat
         except:
             e = sys.exc_info()[1]
-            print("Error: ", e)
+            print("ADS-Error: ", e)
             fobj_out = open("/home/pi/data/LC.log", "a" )
-            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "ADS-error: " + str(e) + '\n' )
+            fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "  ADS-error: " + str(e) + '\n' )
             fobj_out.close()
-            print("ADS-ERROR")
+            print()
             U_end = 9.999
         
         #Bildschirmnausgabe und Datei schreiben:
@@ -333,16 +340,16 @@ try:
                 U_min = False
             except:
                 e = sys.exc_info()[1]
-                print("Error: ", e)
+                print("Error by check_U12: ", e)
                 fobj_out = open("/home/pi/data/LC.log", "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "check_U12 error: " + str(e) + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + "check_U12 error: " + str(e) + '\n' )
                 fobj_out.close()
                 U_min = False
 
         check_U14()
         time.sleep(102)
 
-        if t2 == 20 or U_end < 12.45:
+        if t2 == 20:
             
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
@@ -359,11 +366,11 @@ try:
             
             try:
                 fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "--LC5.6 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + str(round(delta,3)) + "--LC5.6 shutdown--" + '\n' )
                 fobj_out.close()
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR!!--LC5.6 shutdown--" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + str(round(delta,3)) + "network ERROR!!--LC5.6 shutdown--" + '\n' )
                 fobj_out.close()
 
             
@@ -375,7 +382,7 @@ try:
                     
             except:
                 fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) + "network ERROR, no file moving" + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + str(round(delta,3)) + "network ERROR, no file moving" + '\n' )
                 fobj_out.close()
 
             try:
@@ -384,13 +391,13 @@ try:
                 e = sys.exc_info()[1]
                 print("Error: ", e)
                 fobj_out = open("/home/pi/data/LC.log", "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + "mail_U_end error: " + str(e) + '\n' )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     " + "mail_U_end error: " + str(e) + '\n' )
                 fobj_out.close()
                 print("status mail failed")
         
             
             time.sleep(20)
-            subprocess.call("/home/pi/LC/shutdown.sh")
+            #subprocess.call("/home/pi/LC/shutdown.sh")
             print("\nBye")
 
     
