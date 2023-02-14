@@ -10,8 +10,8 @@ def Uend(U_end):                       #E-Mail an sraspi21@gmail.com:
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
 
-        Inhalt = ("U-End, NAS/LC.log " ) 
-        Betreff = ("LC shutdown in 90 sec, U_end: " +str(U_end) + " V")
+        Inhalt = ("shutdown in 90sec, NAS/LC.log " ) 
+        Betreff = ("  U_end: " +str(U_end) + " V" )
         sender_email = "sraspi21@gmail.com"
         receiver_email = "sraspi21@gmail.com"
         password = "rwnqyynanebneqbj"
@@ -54,7 +54,8 @@ def Uend(U_end):                       #E-Mail an sraspi21@gmail.com:
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, text)
            
-            print("U_end_mail sent",'\n',"U_end =", str(U_end))
+            print("U_end_mail sent")
+            print("U_end =", str(U_end))
             
     except:
         e = sys.exc_info()[1]

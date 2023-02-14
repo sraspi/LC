@@ -26,8 +26,8 @@ import mail_U_end
 
 # Import the ADS1115 module.
 # Create an ADS1115 ADC (16-bit) instance.
-#from ADS1x15 import ADS1115
-#adc = ADS1115()
+from ADS1x15 import ADS1115
+adc = ADS1115()
 
 #GPIO_setup
 GPIO.setmode(GPIO.BCM)
@@ -83,7 +83,7 @@ def check_U12():
     if U_bat > 12.45 and U_min:
         print("U_bat>12.45V")
     else:
-        print("U_bat<12.45V,")
+        print("U_bat<12.45V")
         try:
             mail_12.mail12()
             f = open("/home/pi/NAS/LC.log", "a")
@@ -133,11 +133,11 @@ def check_U14():
             Ub14 = False
 
 
-time.sleep(90) #Service-Zeit vor Start des Programms!
 
 try:
     try:
         mailstart.start()
+        time.sleep(90) #Service-Zeit vor Start des Programms!
     except:
         e = sys.exc_info()[1]
         print("Error by mailstart: ", e)
@@ -310,7 +310,7 @@ try:
             fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "  ADS-error: " + str(e) + '\n' )
             fobj_out.close()
             print()
-            U_end = 9.999
+            U_end = 1.1
         
         #Bildschirmnausgabe und Datei schreiben:
         Endzeit = time.time()
@@ -325,7 +325,7 @@ try:
             fobj_out.close()
         except:
             print("nothing")
-        time.sleep(6)
+        time.sleep(1)
         th = datetime.datetime.now()
         t2 = th.hour
         
@@ -342,16 +342,18 @@ try:
                 U_min = False
 
         check_U14()
-        time.sleep(1.02)
+        time.sleep(102)
 
-        if t2 == 9 or U_bat<12.45:
-            
+        if t2 == 9 or U_bat<12.2:
+            print()
+            print("t2 == 9 or U_bat<12.2")
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
             time.sleep(0.1)
             GPIO.output(16, GPIO.HIGH)          # T2_init
             print("T2_start & K2_ON & T2_init")
+            print()
             GPIO.output(20, GPIO.LOW)           # T1_start
             time.sleep(0.2)
             GPIO.output(20, GPIO.HIGH)          # T1_init

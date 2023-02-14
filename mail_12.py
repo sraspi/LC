@@ -51,6 +51,6 @@ def mail12():                       #E-Mail an sraspi21@gmail.com:
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, text)
 
-        print("U_bat<12V, timer reset, shutdown now ")
+        
     except:
         print("U12_mail-error")

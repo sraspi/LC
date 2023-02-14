@@ -12,7 +12,7 @@ def start():                       #E-Mail an sraspi21@gmail.com:
         from email.mime.text import MIMEText
 
         Inhalt = ("data/LC.log")
-        Betreff = str("LC5.6 successfully started")
+        Betreff = str("LC started, 90 sec service")
         sender_email = "sraspi21@gmail.com"
         receiver_email = "sraspi21@gmail.com"
         password = "rwnqyynanebneqbj"
