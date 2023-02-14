@@ -11,8 +11,8 @@ def start():                       #E-Mail an sraspi21@gmail.com:
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
 
-        Inhalt = ("LC.log")
-        Betreff = str("LC5..6 successfully started")
+        Inhalt = ("data/LC.log")
+        Betreff = str("LC5.6 successfully started")
         sender_email = "sraspi21@gmail.com"
         receiver_email = "sraspi21@gmail.com"
         password = "rwnqyynanebneqbj"

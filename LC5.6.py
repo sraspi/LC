@@ -17,25 +17,17 @@ import shutil
 from datetime import date
 import calendar
 
-try:
-    import mail_lc_status
-    import mail_14
-    import mail_12
-    import mailstart
-    import mail_U_end
 
-    # Import the ADS1115 module.
-    # Create an ADS1115 ADC (16-bit) instance.
-    from ADS1x15 import ADS1115
-    adc = ADS1115()
+import mail_lc_status
+import mail_14
+import mail_12
+import mailstart
+import mail_U_end
 
-except:
-    e = sys.exc_info()[1]
-    print("Import-error: ", e)
-    print()
-   
-
-
+# Import the ADS1115 module.
+# Create an ADS1115 ADC (16-bit) instance.
+#from ADS1x15 import ADS1115
+#adc = ADS1115()
 
 #GPIO_setup
 GPIO.setmode(GPIO.BCM)
@@ -94,7 +86,10 @@ def check_U12():
         print("U_bat<12.45V,")
         try:
             mail_12.mail12()
-            time.sleep(20)
+            f = open("/home/pi/NAS/LC.log", "a")
+            f.write( "\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "  U_bat<12.45V  ")
+            f.close()
+            time.sleep(1)
         except:
             e = sys.exc_info()[1]
             print("Error: ", e)
@@ -102,7 +97,7 @@ def check_U12():
             fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "  mail_12 error: " + str(e) + '\n' )
             fobj_out.close()
             #subprocess.call("/home/pi/LC/shutdown.sh")
-            time.sleep(10)
+            time.sleep(1)
        
 
 def check_U14():
@@ -347,9 +342,9 @@ try:
                 U_min = False
 
         check_U14()
-        time.sleep(102)
+        time.sleep(1.02)
 
-        if t2 == 9:
+        if t2 == 9 or U_bat<12.45:
             
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
@@ -396,7 +391,7 @@ try:
                 print("status mail failed")
         
             
-            time.sleep(20)
+            time.sleep(90)
             subprocess.call("/home/pi/LC/shutdown.sh")
             print("\nBye")
 

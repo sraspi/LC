@@ -9,7 +9,7 @@ def mail12():                       #E-Mail an sraspi21@gmail.com:
         from email.mime.text import MIMEText
 
         Inhalt = ("logfile.txt")
-        Betreff = str("U_bat<12.45V, timer reset!")
+        Betreff = str("U_bat<12.45V")
         sender_email = "sraspi21@gmail.com"
         receiver_email = "sraspi21@gmail.com"
         password = "rwnqyynanebneqbj"

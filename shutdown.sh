@@ -1,3 +1,3 @@
 #!/bin/sh
 #shutdown.sh
-sudo shutdown now 
+sudo reboot now 
