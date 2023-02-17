@@ -11,7 +11,7 @@ def start():                       #E-Mail an sraspi21@gmail.com:
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
 
-        Inhalt = ("data/LC.log")
+        Inhalt = ("NAS/LC.log")
         Betreff = str("LC started, 90 sec service")
         sender_email = "sraspi21@gmail.com"
         receiver_email = "sraspi21@gmail.com"
@@ -28,7 +28,7 @@ def start():                       #E-Mail an sraspi21@gmail.com:
         # Add body to email
         message.attach(MIMEText(Inhalt, "plain"))
 
-        filename = "/home/pi/data/LC.log" # In same directory as script
+        filename = "/home/pi/NAS/LC.log" # In same directory as script
            
         # Open PDF file in binary mode  
         with open(filename, "rb") as attachment:

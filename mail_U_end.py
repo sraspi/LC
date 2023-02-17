@@ -10,7 +10,7 @@ def Uend(U_end):                       #E-Mail an sraspi21@gmail.com:
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
 
-        Inhalt = ("shutdown in 90sec, NAS/LC.log " ) 
+        Inhalt = ("shutdown in 90sec,/logfile.txt " ) 
         Betreff = ("  U_end: " +str(U_end) + " V" )
         sender_email = "sraspi21@gmail.com"
         receiver_email = "sraspi21@gmail.com"
@@ -27,7 +27,7 @@ def Uend(U_end):                       #E-Mail an sraspi21@gmail.com:
         # Add body to email
         message.attach(MIMEText(Inhalt, "plain"))
 
-        filename = "/home/pi/NAS/LC.log" # In same directory as script
+        filename = "/home/pi/data/logfile.txt" # In same directory as script
         print("try to send U_end_mail")
            
         # Open PDF file in binary mode  
@@ -43,7 +43,7 @@ def Uend(U_end):                       #E-Mail an sraspi21@gmail.com:
 
                 
             # Add header as key/value pair to attachment part
-            part.add_header("Content-Disposition", "attachment; filename=LC.log",)
+            part.add_header("Content-Disposition", "attachment; filename=.logfile.txt",)
             # Add attachment to message and convert message to string
             message.attach(part)
             text = message.as_string()
