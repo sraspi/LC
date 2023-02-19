@@ -292,13 +292,13 @@ try:
             try:
             
                 f = open("/home/pi/NAS/LC.log", "a")
-                f.write("\n" + "LC5.6.py started at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "LC5.7.py started at: " + timestr + "  Loop: " + str(data))
                 f.close()
             except:
                 f = open("/home/pi/data/LC.log", "a")
-                f.write("\n" + "network error, LC5.6.py started without NAS at: " + timestr + "  Loop: " + str(data))
+                f.write("\n" + "network error, LC5.7.py started without NAS at: " + timestr + "  Loop: " + str(data))
                 f.close()
-                print("NAS not mounted, started LC5.6.py without NAS")
+                print("NAS not mounted, started LC5.7.py without NAS")
             Start = False
         try:
             ads()                                # ADS-Sensorwerte abfragen
@@ -344,9 +344,41 @@ try:
         check_U14()
         time.sleep(102)
 
-        if t2 == 9 or U_bat<12.2:
+        if t2 == 8 or U_bat<12.2:
+            try:
+                mail_U_end.Uend(U_end)
+            except:
+                e = sys.exc_info()[1]
+                print("Error: ", e)
+                fobj_out = open("/home/pi/data/LC.log", "a" )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     " + "mail_U_end error: " + str(e) + '\n' )
+                fobj_out.close()
+                print("U_end failed")
+        
+            try:
+                fobj_out = open("/home/pi/NAS/LC.log",  "a" )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + str(round(delta,3)) + "--LC5.7 shutdown--" + '\n' )
+                fobj_out.close()
+            except:
+                fobj_out = open("/home/pi/data/LC.log",  "a" )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + str(round(delta,3)) + "network ERROR!!--LC5.7 shutdown--" + '\n' )
+                fobj_out.close()
+
+            try:
+                if t2 == 8 and mov:
+                    Datum = time.strftime("%Y_%m_%d")
+                    shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
+                    mov = False 
+                    print("logfile moved")         
+            except:
+                fobj_out = open("/home/pi/data/LC.log",  "a" )
+                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + str(round(delta,3)) + "network ERROR, file not moved" + '\n' )
+                fobj_out.close()
+
+            
             print()
-            print("t2 == 9 or U_bat<12.2")
+            print("servicetime 90 sec.      t2 == 8 or U_bat<12.2")
+            time.sleep(90)
             th = datetime.datetime.now()
             GPIO.output(20, GPIO.HIGH)          # T1_init
             GPIO.output(16, GPIO.LOW)           # T2_start & K2_ON 
@@ -360,40 +392,7 @@ try:
             GPIO.output(27, GPIO.HIGH)          # K1_OFF
             time.sleep(0.1)                     
             GPIO.output(27, GPIO.LOW)           # K1_OFF_init
-            
-            try:
-                fobj_out = open("/home/pi/NAS/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + str(round(delta,3)) + "--LC5.6 shutdown--" + '\n' )
-                fobj_out.close()
-            except:
-                fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + str(round(delta,3)) + "network ERROR!!--LC5.6 shutdown--" + '\n' )
-                fobj_out.close()
-
-            
-            try:
-                if t2 == 9 and mov:
-                    Datum = time.strftime("%Y_%m_%d")
-                    shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
-                    mov = False
-                    
-            except:
-                fobj_out = open("/home/pi/data/LC.log",  "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "      " + str(round(delta,3)) + "network ERROR, no file moving" + '\n' )
-                fobj_out.close()
-
-            try:
-                mail_U_end.Uend(U_end)
-            except:
-                e = sys.exc_info()[1]
-                print("Error: ", e)
-                fobj_out = open("/home/pi/data/LC.log", "a" )
-                fobj_out.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     " + "mail_U_end error: " + str(e) + '\n' )
-                fobj_out.close()
-                print("status mail failed")
-        
-            
-            time.sleep(90)
+            time.sleep(2)
             subprocess.call("/home/pi/LC/shutdown.sh")
             print("\nBye")
 

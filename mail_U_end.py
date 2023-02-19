@@ -43,7 +43,7 @@ def Uend(U_end):                       #E-Mail an sraspi21@gmail.com:
 
                 
             # Add header as key/value pair to attachment part
-            part.add_header("Content-Disposition", "attachment; filename=.logfile.txt",)
+            part.add_header("Content-Disposition", "attachment; filename=logfile.txt",)
             # Add attachment to message and convert message to string
             message.attach(part)
             text = message.as_string()
