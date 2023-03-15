@@ -80,14 +80,14 @@ U_min = True
 
 
 def check_U12():
-    if U_bat > 12.4 and U_min:
-        print("U_bat>12.4V")
+    if U_bat > 12.5 and U_min:
+        print("U_bat>12.5")
     else:
-        print("U_bat<12.4V")
+        print("U_bat<12.5")
         try:
             mail_12.mail12()
             f = open("/home/pi/NAS/LC.log", "a")
-            f.write( "\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "  U_bat<12.4V  ")
+            f.write( "\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "  U_bat<12.5  ")
             f.close()
             time.sleep(1)
         except:
@@ -344,7 +344,7 @@ try:
         check_U14()
         time.sleep(102)
 
-        if t2 == 20 or U_bat<12.4:
+        if t2 == 21 or U_bat<12.3:
             try:
                 mail_U_end.Uend(U_end)
             except:
@@ -365,7 +365,7 @@ try:
                 fobj_out.close()
 
             try:
-                if t2 == 20 and mov:
+                if t2 == 21 and mov:
                     Datum = time.strftime("%Y_%m_%d")
                     shutil.move("/home/pi/data/logfile.txt", "/home/pi/data/" + Datum + ".txt")
                     mov = False 
