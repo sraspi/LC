@@ -10,12 +10,17 @@ def start():                       #E-Mail an sraspi21@gmail.com:
         from email.mime.base import MIMEBase
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
+        
+        #get pw
+        s = open("/home/pi/PW.txt", "r")
+        pw = s.read()
+        s.close()
 
         Inhalt = ("NAS/LC.log")
         Betreff = str("LC started, 90 sec service")
         sender_email = "sraspi21@gmail.com"
         receiver_email = "sraspi21@gmail.com"
-        password = "rwnqyynanebneqbj"
+        password = pw
         #password = input("Type your password and press enter:")
 
         # Create a multipart message and set headers

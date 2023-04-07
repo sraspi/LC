@@ -173,8 +173,8 @@ try:
         data = sum(data)
         l.close()
         print(data)
-        if wd == "Tuesday" or wd == "Thursday":
-            data = 2
+        #if wd == "Tuesday" or wd == "Thursday":
+            #data = 2
         #if wd == "Friday":
             #data = 3
         
@@ -280,6 +280,7 @@ def ads(): # Read all the ADC channel values in a list.
     U_bat = round(sum(A3)/5,3)
     if (I_ges<0):
         I_pi = I_bat
+        I_ges= 0.001
     
     
 try:
@@ -318,7 +319,7 @@ try:
         cpu = CPUTemperature()
         cput = float(cpu.temperature)
         Datum=time.strftime("%Y-%m-%d %H:%M:%S")
-        print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' +  "        I_ges: "  + str(I_ges) + "        I_bat: " + str(I_bat) + "             I_pi "  + str(I_pi)   +  "             U_bat: "  + str(U_bat))
+        print("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "     t: " + str(round(delta,3)) +   ': ' +  "        I_solar: "  + str(I_ges) + "        I_bat: " + str(I_bat) + "             I_pi "  + str(I_pi)   +  "             U_bat: "  + str(U_bat))
         try:
             fobj_out = open("/home/pi/data/logfile.txt", "a" )
             fobj_out.write(Datum + " , " + str(round(delta,3)) + " , "  +  str(I_ges) +  ' , ' + str(I_bat) + " , " + str(I_pi) + ' , ' + str(U_bat) + ' , ' + str(cput) + '\n' )
@@ -344,7 +345,7 @@ try:
         check_U14()
         time.sleep(102)
 
-        if t2 == 21 or U_bat<12.3:
+        if t2 == 21 or U_bat<12.4:
             try:
                 mail_U_end.Uend(U_end)
             except:
